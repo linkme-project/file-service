@@ -1,5 +1,5 @@
 const Router = require('koa-router');
-const fileApi = require('./file');
+const fileApi = require('./files');
 
 const api = new Router();
 
