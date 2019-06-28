@@ -87,4 +87,4 @@ typings/
 .dynamodb/
 
 # File upload directory
-upload/
+uploads/
