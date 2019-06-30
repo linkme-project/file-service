@@ -22,7 +22,7 @@ module.exports = {
             "always"
         ],
         "no-unused-vars": [
-            "false"
+            "off"
         ]
     }
 };
