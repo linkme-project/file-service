@@ -1,9 +1,25 @@
+/* eslint-disable no-unused-vars */
 require('dotenv').config();
 
 const Koa = require('koa');
 const Router = require('koa-router'); 
 const serve = require('koa-static');
 const mount = require('koa-mount');
+
+const mongoose = require('mongoose');
+
+mongoose.Promise = global.Promise;
+
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true
+})
+  .then(
+    response => {
+      console.log('Successfully connected to mongodb');
+    }
+  ).catch(ex => {
+    console.error(ex);
+  });
 
 const app = new Koa();
 

@@ -21,6 +21,8 @@ module.exports = {
             "error",
             "always"
         ],
-        "no-unused-vars": 1
+        "no-unused-vars": [
+            "false"
+        ]
     }
 };

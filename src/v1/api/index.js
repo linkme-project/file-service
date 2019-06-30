@@ -1,14 +1,11 @@
+/* eslint-disable require-atomic-updates */
 require('dotenv').config();
 
 const Router = require('koa-router');
 const multer = require('koa-multer');
 
-const RESULT_CODE = {
-  SUCCESS: 0,
-  DATA_EMPTY: 1,
-  FAIL: -1,
-  API_CALL_ERROR: -2
-};
+const fileController = require('../file/file.controller');
+const RESULT_CODE = require('../constants').RESULT_CODE;
 
 // load environment variables.
 const {
@@ -43,41 +40,49 @@ fileApi.post('/upload', async (ctx, next) => {
   try {
     await upload(ctx, next);
     
-    // TODO: save file info. to mongo db
-    
     let file = ctx.req.files[0];
 
     let result = {
       resultCode: RESULT_CODE.SUCCESS,
       resultMessage: null,
-      resultValue: {
+      resultValue: {  
+        fileSn: null,
         fileName: file.originalname,
         fileSize: file.size,        
-        fileSn: 1,
-        fileUrl: `${ctx.host}${downloadUrlPrefix}/${file.uploadedFileName}`
+        fileUrl: `${ctx.host}${downloadUrlPrefix}/${file.uploadedFileName}`,
+        regDate: new Date()
       }
     };
-  
-    ctx.body = result;    
-  } catch(ex) {
+
+    // save file info. to mongo db
+    const insertedFile = await fileController.create(result.resultValue);
+    result.resultValue.fileSn = insertedFile._id;
+
+    ctx.body = result;
+  } catch (ex) {
     ctx.body = { resultCode: RESULT_CODE.FAIL,  resultMessage: ex.message,  resultValue: null };
   }
 });
 
-fileApi.get('/:fileSn', ctx => {
+fileApi.get('/:fileId', async ctx => {
+  let file, result;
+  // get file info. from mongo db.
+  try {
+    file = await fileController.search(ctx.params.fileId);
 
-  // TODO: get file info. from mongo db.
-
-  let result = {
-    resultCode: 1,
-    resultMessage: null,
-    resultValue: {
-      fileName: '123',
-      fileSize: '123',        
-      fileSn: 1,
-      fileUrl: '123'
-    }
-  };
+    result = {
+      resultCode: file === null ? RESULT_CODE.DATA_EMPTY : RESULT_CODE.SUCCESS,
+      resultMessage: file === null ? 'File is not exists' : null,
+      resultValue: file
+    };
+  
+  } catch (ex) {
+    result = {
+      resultCode: RESULT_CODE.DB_FAILURE,
+      resultMessage: ex.message,
+      resultValue: file
+    };  
+  }
 
   ctx.body = result;
 });
