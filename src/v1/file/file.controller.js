@@ -34,7 +34,7 @@ exports.search = async (fileId) => {
   if (file.length == 0) return null;
 
   let result = {
-    fileSn: file[0]._id,
+    fileId: file[0]._id,
     fileName: file[0].fileName,
     fileSize: file[0].fileSize,
     fileUrl: file[0].fileUrl,

@@ -46,7 +46,7 @@ fileApi.post('/upload', async (ctx, next) => {
       resultCode: RESULT_CODE.SUCCESS,
       resultMessage: null,
       resultValue: {  
-        fileSn: null,
+        fileId: null,
         fileName: file.originalname,
         fileSize: file.size,        
         fileUrl: `${ctx.host}${downloadUrlPrefix}/${file.uploadedFileName}`,
@@ -56,7 +56,7 @@ fileApi.post('/upload', async (ctx, next) => {
 
     // save file info. to mongo db
     const insertedFile = await fileController.create(result.resultValue);
-    result.resultValue.fileSn = insertedFile._id;
+    result.resultValue.fileId = insertedFile._id;
 
     ctx.body = result;
   } catch (ex) {
