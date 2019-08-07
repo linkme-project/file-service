@@ -7,5 +7,4 @@ RUN npm install -g yarn
 RUN yarn install
 COPY . /usr/src/app
 EXPOSE 3000
-RUN MONGO_URI=mongo:27017
 CMD yarn start:dev
